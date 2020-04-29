@@ -1,0 +1,6 @@
+mock
+coverage
+numpy
+scipy
+scikit-learn
+matplotlib

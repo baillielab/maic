@@ -1,19 +1,10 @@
+import logging
+import re
+
 from entity import Entity
 from entitylist import EntityList, KnnEntityList, PolynomialEntityList, \
     ExponentialEntityList, SvrEntityList
-import re
-import logging
-
-
-class WarnValueError(ValueError):
-    """Error used when the supplied value is invalid but we can continue"""
-    pass
-
-
-class KillValueError(ValueError):
-    """Error used when the supplied value is invalid and we must STOP"""
-    pass
-
+from errors import WarnValueError, KillValueError
 
 blank_matcher = re.compile("^\\s*$")
 
@@ -49,7 +40,7 @@ class EntityListBuilder(object):
         :param limit: The maximum number of entries to be contained in the list
         :return:
         """
-        columns = string.split("\t")
+        columns = string.strip().split("\t")
         if len(columns) < 4:
             raise WarnValueError('Insufficient columns to create an '
                                  'EntityList')
@@ -90,7 +81,7 @@ class EntityListBuilder(object):
         :return: an appropriate EntityList object
         """
         assert ranked is not None
-        entity_list = None
+        # entity_list = None
         if not ranked or self.list_type == 'none':
             entity_list = EntityList()
         elif self.list_type == 'knn':
@@ -103,7 +94,7 @@ class EntityListBuilder(object):
             entity_list = SvrEntityList()
         else:
             logger.warning("Unrecognised EntityList Type ('%s'). Returning an "
-                        "unranked EntityList." % self.list_type)
+                           "unranked EntityList." % self.list_type)
             entity_list = EntityList()
 
         return entity_list

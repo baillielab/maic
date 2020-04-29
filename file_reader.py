@@ -22,4 +22,3 @@ class FileReader(object):
                     pass
                 elif not line.startswith("#"):
                     self.list_lines.append(line)
-

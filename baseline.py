@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 
 class Baseline(object):
-    """Object to represent a Baseline measuement from a random simulated data
+    """Object to represent a Baseline measurement from a random simulated data
     set"""
 
     def __init__(self, code_string, base_score, base_stdev, num_perms, model):
@@ -50,7 +50,7 @@ def get_baseline_from_store(file_path, version, code_string, model,
     highest_permutations = 0
     best_match = -1
     home = expanduser("~")
-    file_path= file_path.replace("${HOME}", home)
+    file_path = file_path.replace("${HOME}", home)
     if exists(file_path):
         logger.debug("opening the baselines file at %s" % file_path)
         with open(file_path, "r") as baseline_file:
@@ -88,8 +88,8 @@ def get_baseline_from_store(file_path, version, code_string, model,
                 # note its index. If it matches a previous one, use this one
                 # because it will be a later calculation
                 if int(cols[2]) >= highest_permutations:
-                    logger.debug("Got a match - better than anything we've seen "
-                                 "so far")
+                    logger.debug("Got a match - better than anything we've "
+                                 "seen so far")
                     best_match = len(matches) - 1
                 else:
                     logger.debug("Got a match - previous one was better")
@@ -110,7 +110,7 @@ def put_baseline_to_store(file_path, version, baseline):
     :param version: version of the code that we have used
     :param baseline: the baseline object to store"""
     home = expanduser("~")
-    file_path= file_path.replace("${HOME}", home)
+    file_path = file_path.replace("${HOME}", home)
     with open(file_path, "a") as baseline_file:
         baseline_file.write('\t'.join(
             [str(version), baseline.model, str(baseline.num_perms),
