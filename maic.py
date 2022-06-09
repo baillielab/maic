@@ -75,6 +75,7 @@ class Maic(object):
         logger.info("Dumping gene scores")
         gsd = AllScoresGeneScoresDumper(cross_validation, output_folder)
         gsd.dump()
+        gsd.dataset_feature_check_to_choice_methods()
 
     def make_output_folder(self, output_folder):
         """Given a requested output folder, create it and return the full

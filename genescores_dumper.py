@@ -1,6 +1,6 @@
 import io
 import sys
-
+import numpy as np
 from constants import T_METHOD_NONE
 
 
@@ -87,6 +87,40 @@ class GeneScoresDumper(object):
 
     def additional_column_data(self, entity):
         return []
+    def dataset_feature_check_to_choice_methods(self):
+        out_stream = sys.stdout
+        if self.output_folder:
+            out_stream = io.open(
+                "{}{}.txt".format(self.output_folder, "dataset_checking"), 'w+')
+        else:
+            out_stream.writelines("-------- {} ---------".format("dataset_checking"))
+
+        lists = self.lists_in_category_order()
+        number_of_lists = len(lists)
+        list_weights0 = np.zeros(number_of_lists)
+        unranked_included = False
+        for i in range(number_of_lists):
+            list_i = lists[i]
+            if list_i.is_ranked:
+                list_weights0[i] = list_i.weights_list[0]
+            else:
+                unranked_included = True
+        normalized_weights = list_weights0 / np.max(list_weights0)
+        hetro = np.std(normalized_weights)
+        text1 = " Based on the characteristics of your dataset, we have estimated that MAIC is the best algorithm for this analysis! See Wang et al [link] for an explanation of how we evaluated this."
+        text2 = "Warning! Your dataset has the unusual combination of ranked-only data and a small number of sources (" + str(
+            number_of_lists) + ") included. Based on these features we think you'd get better results from running BiGbottom [link]. See Wang et al [link] for an explanation of how we evaluated this."
+        text3 = "Warning! Your dataset has the unusual combination of ranked-only data, high heterogeneity and a relatively large number of sources (" + str(
+            number_of_lists) + ") included. Based on these features we think you'd get better results from running BIRRA [link]. See Wang et al [link] for an explanation of how we evaluated this."
+        out_text = text1
+        if not unranked_included:
+            if number_of_lists < 8:
+                out_text = text2
+            elif hetro > 0.12:
+                out_text = text3
+        out_stream.writelines(out_text)
+        print(out_text)
+
 
 
 class AllScoresGeneScoresDumper(GeneScoresDumper):

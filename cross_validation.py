@@ -90,6 +90,7 @@ class CrossValidation(object):
             delta = 0
             counter = counter - 1
             iteration += 1
+            # print(iteration,delta)
             for entity in self.entities:  # TODO consolidate these two
                 entity.calculate_new_score()
             for entity in self._fake_entities:
