@@ -41,3 +41,6 @@ The first four columns (tab-separated text strings) in each line specify feature
 -q, --quiet           decrease the detail of logging messages (overrides the
                       -v/--verbose flag)
 
+# Dataset analysis for methods selection
+  
+The dataset features including ranking information, the number of sources included and the heterogeneity of quslity will be explored to show the estimation of the best performed ranking aggregation method for the given dataset. See Wang et al [link] for an explanation of how we evaluated this. 
