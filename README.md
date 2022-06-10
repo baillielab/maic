@@ -44,3 +44,13 @@ The first four columns (tab-separated text strings) in each line specify feature
 # Dataset analysis for methods selection
   
 The dataset features including ranking information, the number of sources included and the heterogeneity of quslity will be explored to show the estimation of the best performed ranking aggregation method for the given dataset. See Wang et al [link] for an explanation of how we evaluated this. 
+  
+Examples are included in the folder example_input_and_result with simulated input data and output of MAIC. 
+
+  When MixSmall data with high heterogeneity (See Wang et al [link]) is used, the algorithm will output:
+  
+  "Based on the characteristics of your dataset, we have estimated that MAIC is the best algorithm for this analysis! See Wang et al [link] for an explanation of how we evaluated this."
+
+  When RankLarge data with high heterogeneity (See Wang et al [link]) is used, the algorithm will output:
+  
+  "Warning! Your dataset has the unusual combination of ranked-only data, high heterogeneity and a relatively large number of sources (11) included. Based on these features we think you'd get better results from running BIRRA [http://www.pitt.edu/~mchikina/BIRRA/]. See Wang et al [link] for an explanation of how we evaluated this."
