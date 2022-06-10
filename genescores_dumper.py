@@ -109,9 +109,9 @@ class GeneScoresDumper(object):
         hetro = np.std(normalized_weights)
         text1 = " Based on the characteristics of your dataset, we have estimated that MAIC is the best algorithm for this analysis! See Wang et al [link] for an explanation of how we evaluated this."
         text2 = "Warning! Your dataset has the unusual combination of ranked-only data and a small number of sources (" + str(
-            number_of_lists) + ") included. Based on these features we think you'd get better results from running BiGbottom [link]. See Wang et al [link] for an explanation of how we evaluated this."
+            number_of_lists) + ") included. Based on these features we think you'd get better results from running BiGbottom [https://github.com/xuelilyli/BiG]. See Wang et al [link] for an explanation of how we evaluated this."
         text3 = "Warning! Your dataset has the unusual combination of ranked-only data, high heterogeneity and a relatively large number of sources (" + str(
-            number_of_lists) + ") included. Based on these features we think you'd get better results from running BIRRA [link]. See Wang et al [link] for an explanation of how we evaluated this."
+            number_of_lists) + ") included. Based on these features we think you'd get better results from running BIRRA [http://www.pitt.edu/~mchikina/BIRRA/]. See Wang et al [link] for an explanation of how we evaluated this."
         out_text = text1
         if not unranked_included:
             if number_of_lists < 8:

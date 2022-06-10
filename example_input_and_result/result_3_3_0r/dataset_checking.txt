@@ -1,0 +1,1 @@
+Warning! Your dataset has the unusual combination of ranked-only data, high heterogeneity and a relatively large number of sources (11) included. Based on these features we think you'd get better results from running BIRRA [http://www.pitt.edu/~mchikina/BIRRA/]. See Wang et al [link] for an explanation of how we evaluated this.
