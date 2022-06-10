@@ -47,7 +47,7 @@ The dataset features including ranking information, the number of sources includ
   
 Examples are included in the folder example_input_and_result with simulated input data and output of MAIC. 
 
-  When MixSmall data with high heterogeneity (See Wang et al [link]) is used, the algorithm will output:
+  When MixLarge data with high heterogeneity (See Wang et al [link]) is used, the algorithm will output:
   
   "Based on the characteristics of your dataset, we have estimated that MAIC is the best algorithm for this analysis! See Wang et al [link] for an explanation of how we evaluated this."
 
