@@ -1,7 +1,7 @@
 import io
 import sys
 import numpy as np
-from constants import T_METHOD_NONE
+from maic.constants import T_METHOD_NONE
 
 
 # TODO - rewrite this object to handle TransformMethods rather than separate

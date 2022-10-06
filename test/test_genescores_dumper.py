@@ -2,10 +2,10 @@ from unittest import TestCase, main
 
 import mock
 
-from constants import T_METHOD_NONE
-from cross_validation import CrossValidation
-from entity import Entity
-from entitylist import EntityList
+from maic.constants import T_METHOD_NONE
+from maic.cross_validation import CrossValidation
+from maic.entity import Entity
+from maic.entitylist import EntityList
 from genescores_dumper import GeneScoresDumper, IterationAwareGeneScoresDumper
 
 

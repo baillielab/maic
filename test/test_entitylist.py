@@ -6,8 +6,8 @@ from unittest import TestCase, skip
 import numpy as np
 from mock import MagicMock, patch
 
-from entity import Entity
-from entitylist import EntityList, ExponentialEntityList, adjusted_weight, \
+from maic.entity import Entity
+from maic.entitylist import EntityList, ExponentialEntityList, adjusted_weight, \
     FAILED_RANKED_LIST_DESCENT_STEP
 
 

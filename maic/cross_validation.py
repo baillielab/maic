@@ -2,7 +2,7 @@ import logging
 
 import numpy
 
-from entity import Entity
+from .entity import Entity
 
 POST_ITERATION_CALLBACK = 'iteration'
 

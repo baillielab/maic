@@ -4,9 +4,9 @@ from unittest import TestCase, skip
 # noinspection PyProtectedMember
 from mock import Mock, MagicMock, patch, call
 
-from entity import Entity
-from entitylist import EntityList
-from constants import T_METHOD_NONE
+from maic.entity import Entity
+from maic.entitylist import EntityList
+from maic.constants import T_METHOD_NONE
 
 
 class TestEntity(TestCase):

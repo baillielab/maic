@@ -2,9 +2,9 @@ import unittest
 
 from mock import patch
 
-from entitylist_builder import EntityListBuilder
-from errors import WarnValueError, KillValueError
-from entitylist import EntityList, KnnEntityList, SvrEntityList, \
+from maic.entitylist_builder import EntityListBuilder
+from maic.errors import WarnValueError, KillValueError
+from maic.entitylist import EntityList, KnnEntityList, SvrEntityList, \
     PolynomialEntityList, ExponentialEntityList
 
 

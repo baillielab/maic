@@ -1,8 +1,8 @@
 """
 Code relating to the creation and management of Entities
 """
-from entitylist import adjusted_weight
-from constants import T_METHOD_NONE
+from .entitylist import adjusted_weight
+from .constants import T_METHOD_NONE
 
 
 class Entity:

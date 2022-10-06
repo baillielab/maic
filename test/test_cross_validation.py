@@ -4,9 +4,9 @@ from unittest import TestCase
 import mock
 from mock import call, Mock
 
-from cross_validation import CrossValidation, POST_ITERATION_CALLBACK
-from entity import Entity
-from entitylist import EntityList
+from maic.cross_validation import CrossValidation, POST_ITERATION_CALLBACK
+from maic.entity import Entity
+from maic.entitylist import EntityList
 
 
 class TestCrossValidation(TestCase):

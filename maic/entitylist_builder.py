@@ -1,10 +1,10 @@
 import logging
 import re
 
-from entity import Entity
-from entitylist import EntityList, KnnEntityList, PolynomialEntityList, \
+from .entity import Entity
+from .entitylist import EntityList, KnnEntityList, PolynomialEntityList, \
     ExponentialEntityList, SvrEntityList
-from errors import WarnValueError, KillValueError
+from .errors import WarnValueError, KillValueError
 
 blank_matcher = re.compile("^\\s*$")
 

@@ -7,10 +7,10 @@ import re
 import sys
 from time import strftime
 
-from cross_validation import build_cross_validation, POST_ITERATION_CALLBACK
+from maic.cross_validation import build_cross_validation, POST_ITERATION_CALLBACK
 from cv_dumper import CrossValidationDumper
 from cv_plotter import CrossValidationPlotter
-from entitylist_builder import EntityListBuilder
+from maic.entitylist_builder import EntityListBuilder
 from file_reader import FileReader
 from genescores_dumper import AllScoresGeneScoresDumper, \
     IterationAwareGeneScoresDumper
