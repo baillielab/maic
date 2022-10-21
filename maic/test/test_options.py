@@ -3,7 +3,7 @@ from datetime import datetime
 from time import sleep, strftime
 from unittest import TestCase
 
-import options
+import maic.cli.options as options
 from maic.constants import T_METHOD_NONE, T_METHOD_MEAN, T_METHOD_STEM_SCALE, \
     T_METHOD_STEM_ADJUST, S_METHOD_NONE, S_METHOD_Z_TRANSFORM, \
     S_METHOD_STEM_POW

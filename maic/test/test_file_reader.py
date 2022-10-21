@@ -1,7 +1,7 @@
 from unittest import TestCase, main
 import mock
 
-from file_reader import FileReader
+from maic.io.file_reader import FileReader
 
 
 class TestFileReader(TestCase):

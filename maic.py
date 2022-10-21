@@ -11,10 +11,10 @@ from maic.cross_validation import build_cross_validation, POST_ITERATION_CALLBAC
 from cv_dumper import CrossValidationDumper
 from cv_plotter import CrossValidationPlotter
 from maic.entitylist_builder import EntityListBuilder
-from file_reader import FileReader
-from genescores_dumper import AllScoresGeneScoresDumper, \
+from maic.io.file_reader import FileReader
+from maic.io.genescores_dumper import AllScoresGeneScoresDumper, \
     IterationAwareGeneScoresDumper
-from options import get_parsed_options
+from maic.cli.options import get_parsed_options
 
 
 class Maic(object):

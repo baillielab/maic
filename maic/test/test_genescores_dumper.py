@@ -6,7 +6,7 @@ from maic.constants import T_METHOD_NONE
 from maic.cross_validation import CrossValidation
 from maic.entity import Entity
 from maic.entitylist import EntityList
-from genescores_dumper import GeneScoresDumper, IterationAwareGeneScoresDumper
+from maic.io.genescores_dumper import GeneScoresDumper, IterationAwareGeneScoresDumper
 
 
 class TestGeneScoresDumper(TestCase):
