@@ -8,8 +8,8 @@ import sys
 from time import strftime
 
 from maic.cross_validation import build_cross_validation, POST_ITERATION_CALLBACK
-from cv_dumper import CrossValidationDumper
-from cv_plotter import CrossValidationPlotter
+from maic.io.cv_dumper import CrossValidationDumper
+from maic.io.cv_plotter import CrossValidationPlotter
 from maic.entitylist_builder import EntityListBuilder
 from maic.io.file_reader import FileReader
 from maic.io.genescores_dumper import AllScoresGeneScoresDumper, \

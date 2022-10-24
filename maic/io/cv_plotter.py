@@ -54,9 +54,3 @@ class CrossValidationPlotter(object):
 
         gsd = AllScoresGeneScoresDumper(cross_validation, self.directory_path, ".{iteration:03d}".format(iteration=iteration_number))
         gsd.dump()
-
-
-
-
-
-

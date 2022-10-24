@@ -1,24 +1,63 @@
+from typing import Sequence
 from ..models import EntityListModel
+from ..errors import WarnValueError
+from enum import Enum
 
-def read_file(filepath, *args, format="maic"):
+class FORMAT(Enum):
+    MAIC = "maic"
+    JSON = "json"
+    YAML = "yaml"
+
+def read_file(filepath: str, *args, format: FORMAT = FORMAT.MAIC) -> Sequence[EntityListModel]:
     
     def parse_json(file):
-        pass
+        from json import load
+        data = load(file)
+
+        return [EntityListModel(name=i['name'], category=i['category'], entities=i['entities']) for i in data]
 
     def parse_yaml(file):
-        pass
+        from oyaml import load, Loader
+        data = load(file, Loader)
+
+        return [EntityListModel(name=i['name'], category=i['category'], entities=i['entities']) for i in data]
 
     def parse_maic(file):
-        pass
+        from re import match
+        data = []
+        for line in file:
+            if line.startswith("-----"):
+                # stop processing the file at this point
+                return data
+            if line.startswith("#") or match(r"^\s*$", line):
+                # empty or commented line: ignore
+                continue
+
+            # process the line of data:
+            columns = line.strip().split("\t")
+            if len(columns) < 4:
+                # per docstring this isn't meant to break processing, but 'raise'ing will.
+                # need to revisit this logic.
+                raise WarnValueError('Insufficient columns to create an EntityList')
+
+            elm = EntityListModel(name=columns[1], category=columns[0], entities=[])
+            for word in columns[3:]:
+                if match(r"^\s*$", word):
+                    # blank column, need to log the error:
+                    pass
+                else:
+                    elm.entities.append(word)
+
+        return data
 
     parsers = {
-        "maic": parse_maic,
-        "yaml": parse_yaml,
-        "json": parse_json
+        FORMAT.MAIC: parse_maic,
+        FORMAT.YAML: parse_yaml,
+        FORMAT.JSON: parse_json
     }
 
     if format not in parsers:
-        raise ValueError(f"Uknown file format: {format}")
+        raise ValueError(f"Unknown file format: {format}")
 
     with open(filepath, "r") as file:
         return parsers[format](file)
