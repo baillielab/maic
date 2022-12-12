@@ -48,6 +48,10 @@ All declared constants *except* `T_METHOD_NONE`
 * `get_entities()` (lines 72 **and** 208)
 It is fortunate that this method is unused, as it has two definitions in the class with different return values.
 
+### `options.py`
+
+- `parsed_options.random_source_len` line 53
+
 ## Redundant Code
 
 The following code is referenced elsewhere in MAIC (outside of testing) but has no impact on processing.
