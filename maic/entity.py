@@ -1,9 +1,14 @@
+from __future__ import annotations
+
 """
 Code relating to the creation and management of Entities
 """
-from .entitylist import adjusted_weight
 from .constants import T_METHOD_NONE
+from typing import MutableSequence, Sequence, TYPE_CHECKING
+from maic.types import Corrector
 
+if TYPE_CHECKING:
+    from .entitylist import EntityList
 
 class Entity:
     """Represent an entity (e.g. a gene)."""
@@ -13,9 +18,9 @@ class Entity:
         assert name
         self.name = name
         self.score = 1
-        self.lists = []
+        self.lists: MutableSequence[EntityList] = []
         self.__weights = {}
-        self.__category_winners = {}
+        self.__category_winners:dict[str,EntityList] = {}
         self.adjusted_scores = {}
 
     def transformed_score(self, method=T_METHOD_NONE):
@@ -26,13 +31,14 @@ class Entity:
             transformed_score = self.adjusted_scores.get(method)
         return transformed_score
 
+    # unused
     def as_dict_for_json(self):
         """Convert the relevant fields to a dictionary suitable for dumping
         as JSON"""
         return dict(name=self.name, adjusted_scores=self.adjusted_scores,
                     score=self.score)
 
-    def note_list(self, entity_list):
+    def note_list(self, entity_list: EntityList):
         """
         Add the supplied list to our list of lists if it wasn't already in
         there.
@@ -41,21 +47,23 @@ class Entity:
             self.lists.append(entity_list)
             self.__weights[entity_list] = 0.0
 
-    def forget_list(self, entity_list):
+    def forget_list(self, entity_list: EntityList):
         if entity_list in self.lists:
             self.lists.remove(entity_list)
             del self.__weights[entity_list]
 
-    def calculate_final_corrected_scores(self, methods=None):
+    # redundant - referenced but Correctors are not defined in system.
+    def calculate_final_corrected_scores(self, methods:Sequence[Corrector]=None):
         """Having reached completion, we can now calculate the corrected or
         adjusted scores based on a number of options"""
 
         # KJB, BW, AL agreed on 26th April 2019 that it is correct to
         # calculate a new score _after_ the weights have converged
         if methods is None:
-            methods = []
+            methods:Sequence[Corrector] = []
+
         self.calculate_new_score()
-        adjusted_weights = {}
+        adjusted_weights: dict[Corrector, dict[str, Sequence[float]]] = {}
 
         # Set up a data structure to grab back all the weights, sorted by
         # list category
@@ -66,7 +74,7 @@ class Entity:
                     adjusted_weights[method][lst.category] = []
 
         # Get the local (list-specific) weights
-        adjusted_scores = {}
+        adjusted_scores: dict[str,float] = {}
         for lst in self.lists:
             lst_weights = lst.get_final_weights_for_entity(self, methods)
             for method in lst_weights:
@@ -83,8 +91,9 @@ class Entity:
 
         self.adjusted_scores = adjusted_scores
 
+    # redundant - only referenced in redundant method Entity.calculate_final_corrected_score()
     @staticmethod
-    def sum_max_weights_per_category(weights):
+    def sum_max_weights_per_category(weights: dict[str, Sequence[float]]) -> float:
         """Calculate the sum of the highest value in each of the categories
         in the weights dictionary"""
         sum_of_weights = 0.0
@@ -121,6 +130,7 @@ class Entity:
                 self.__category_winners[lst.category] = lst
         self.score = new_score
 
+    # unused - only used in testing
     def score_from_list(self, entity_list):
         """Report the contribution of the given list to the current score"""
         return_value = 0.0

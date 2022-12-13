@@ -598,7 +598,7 @@ class TestEntityList(TestCase):
 
         expected_result = scaled_score
         self.assertEqual(expected_result,
-                         adjusted_weight(initial, mean, stdev, transformer,
+                         EntityList.adjusted_weight(initial, mean, stdev, transformer,
                                          scaler),
                          'adjusted_weight')
 

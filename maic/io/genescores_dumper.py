@@ -1,7 +1,16 @@
+from __future__ import annotations
+
 import io
 import sys
 import numpy as np
 from maic.constants import T_METHOD_NONE
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from maic.cross_validation import CrossValidation
+    from maic.entity import Entity
+    from maic.entitylist import ExponentialEntityList 
 
 
 # TODO - rewrite this object to handle TransformMethods rather than separate
@@ -9,7 +18,7 @@ from maic.constants import T_METHOD_NONE
 
 class GeneScoresDumper(object):
 
-    def __init__(self, cross_validation, output_folder=None):
+    def __init__(self, cross_validation: CrossValidation, output_folder=None):
         """Create a GeneScoresDumper object for the given CrossValidation
         analysis"""
         self.cross_validation = cross_validation
@@ -54,8 +63,7 @@ class GeneScoresDumper(object):
         # a header and the data to stdout
         out_stream = sys.stdout
         if self.output_folder:
-            out_stream = io.open(
-                "{}{}.txt".format(self.output_folder, famn.filename), 'w+')
+            out_stream = io.open("{}{}.txt".format(self.output_folder, famn.filename), 'w+')
         else:
             out_stream.writelines("-------- {} ---------".format(famn.filename))
 
@@ -74,6 +82,11 @@ class GeneScoresDumper(object):
             out_columns += self.additional_column_data(entity)
             out_stream.writelines('\t'.join(out_columns) + '\n')
 
+        # we need to clean up after ourselves if we opened a file...
+        if self.output_folder:
+            out_stream.close()
+
+
     def entities_in_descending_score_order(self, method=T_METHOD_NONE):
         return sorted(self.cross_validation.entities,
                       key=lambda x: x.transformed_score(method=method),
@@ -87,6 +100,7 @@ class GeneScoresDumper(object):
 
     def additional_column_data(self, entity):
         return []
+
     def dataset_feature_check_to_choice_methods(self):
         out_stream = sys.stdout
         if self.output_folder:
@@ -113,6 +127,7 @@ class GeneScoresDumper(object):
         text3 = "Warning! Your dataset has the unusual combination of ranked-only data, high heterogeneity and a relatively large number of sources (" + str(
             number_of_lists) + ") included. Based on these features we think you'd get better results from running BIRRA [http://www.pitt.edu/~mchikina/BIRRA/]. See Wang et al [https://doi.org/10.1093/bioinformatics/btac621] for an explanation of how we evaluated this."
         out_text = text1
+
         if not unranked_included:
             if number_of_lists < 8:
                 out_text = text2
@@ -121,6 +136,9 @@ class GeneScoresDumper(object):
         out_stream.writelines(out_text)
         print(out_text)
 
+        if self.output_folder:
+            out_stream.close()
+
 
 
 class AllScoresGeneScoresDumper(GeneScoresDumper):
@@ -128,11 +146,11 @@ class AllScoresGeneScoresDumper(GeneScoresDumper):
     def extra_headers(self):
         return ['contributors']
 
-    def score_for_entity_from_list(self, entity, lst):
+    def score_for_entity_from_list(self, entity: Entity, lst: ExponentialEntityList):
         return entity.raw_score_from_list(lst)
 
-    def additional_column_data(self, entity):
-        return_value_list = []
+    def additional_column_data(self, entity: Entity) -> str:
+        return_value_list:list[str] = []
         category_winners = entity.winning_lists_by_category()
         for category in category_winners:
             lst = category_winners[category]
@@ -145,7 +163,7 @@ class IterationAwareGeneScoresDumper(AllScoresGeneScoresDumper):
     iteration it is being called from (using the CrossValidation callback
     mechanism"""
 
-    def __init__(self, cross_validation, output_folder=None):
+    def __init__(self, cross_validation: CrossValidation, output_folder=None):
         super(IterationAwareGeneScoresDumper, self).__init__(
             cross_validation=cross_validation,
             output_folder=output_folder

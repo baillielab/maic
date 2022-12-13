@@ -3,6 +3,13 @@ import logging
 import numpy
 
 from .entity import Entity
+from .entitylist import ExponentialEntityList
+from typing import MutableSequence, Sequence
+
+from maic.types import Corrector
+
+from maic.io.cv_dumper import CrossValidationDumper
+from maic.io.cv_plotter import CrossValidationPlotter
 
 POST_ITERATION_CALLBACK = 'iteration'
 
@@ -16,8 +23,8 @@ class CrossValidation(object):
     reach convergence (as determined by the threshold value) or we exceed
     the maximum number of iterations."""
 
-    def __init__(self, entities, entity_lists, threshold, max_iterations,
-                 transform_methods=None):
+    def __init__(self, entities: MutableSequence[Entity], entity_lists: MutableSequence[ExponentialEntityList], threshold: float, max_iterations: int,
+                 transform_methods:MutableSequence[Corrector]=None):
         """Create a new CrossValidation object passing in the Entity and
         EntityList objects and all the settings required to run the
         analysis. Fail if any of the supplied values are missing.
@@ -34,8 +41,8 @@ class CrossValidation(object):
         self._fake_entities_seen = {}
         self._fake_entities = []
         self.transform_methods = transform_methods
-        self.plotter = None
-        self.callbacks = {POST_ITERATION_CALLBACK: []}
+        self.plotter: CrossValidationPlotter = None
+        self.callbacks:dict[str, Sequence[CrossValidationDumper]] = {POST_ITERATION_CALLBACK: []}
 
     def run(self):
         """Run the analysis."""
@@ -45,6 +52,7 @@ class CrossValidation(object):
             entity.calculate_final_corrected_scores(
                 methods=self.transform_methods)
 
+    # unused
     def replace_list(self, list_to_replace, replacement):
         """Replace a list in our set with another one. Because of list
         iterators in Python not coping with the underlying list being
@@ -107,7 +115,7 @@ class CrossValidation(object):
                 "{iterations} iterations complete - delta = {delta}".format(
                     iterations=(self.max_iterations - counter), delta=delta))
 
-    def register_callback(self, callback_type, callback_object):
+    def register_callback(self, callback_type, callback_object: CrossValidationDumper):
         """Register an object to be called when a certain phase of the code
         execution is reached. The registered callback_object must have a
         method called 'do_callback' that takes two arguments. The first is
@@ -120,6 +128,7 @@ class CrossValidation(object):
             logger.warning("Unknown callback type specified ({}). Ignoring "
                            "object {}".format(callback_type, callback_object))
 
+    # unused - only used in testing
     def code_string(self):
         """Generate a string that describes the set of data that we have been
         given to work with."""
@@ -134,6 +143,7 @@ class CrossValidation(object):
             out_list.append('.'.join(sorted(strings_by_category[category])))
         return '|'.join(out_list)
 
+    # unused - only used in testing 
     def summary_data(self):
         """Calculate and return summary data from the Entities in this
         analysis"""
@@ -142,6 +152,7 @@ class CrossValidation(object):
         stdev = numpy.std(scores)
         return average, stdev
 
+    # unused
     def get_or_create_entity(self, n):
         """Get an Entity"""
         if n < len(self.entities):
@@ -156,7 +167,7 @@ class CrossValidation(object):
 
 
 def build_cross_validation(lines, entity_list_builder, stability,
-                           max_iterations, transform_methods=None):
+                           max_iterations, transform_methods=None) -> CrossValidation:
     """Given a set of input data lines, a pre-configured EntityListBuilder
     and some values for stability and max_iterations, return a new
     CrossValidation analysis object"""

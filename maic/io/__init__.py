@@ -3,10 +3,10 @@ from ..models import EntityListModel
 from ..errors import WarnValueError
 from enum import Enum
 
-class FORMAT(Enum):
-    MAIC = "maic"
-    JSON = "json"
-    YAML = "yaml"
+import logging
+logger = logging.getLogger(__name__)
+
+FORMAT = Enum("Format", "MAIC JSON YAML")
 
 def read_file(filepath: str, *args, format: FORMAT = FORMAT.MAIC) -> Sequence[EntityListModel]:
     
@@ -14,13 +14,13 @@ def read_file(filepath: str, *args, format: FORMAT = FORMAT.MAIC) -> Sequence[En
         from json import load
         data = load(file)
 
-        return [EntityListModel(name=i['name'], category=i['category'], entities=i['entities']) for i in data]
+        return [EntityListModel(name=i['name'], category=i['category'], ranked=i['ranked'], entities=i['entities']) for i in data]
 
     def parse_yaml(file):
         from oyaml import load, Loader
         data = load(file, Loader)
 
-        return [EntityListModel(name=i['name'], category=i['category'], entities=i['entities']) for i in data]
+        return [EntityListModel(name=i['name'], category=i['category'], ranked=i['ranked'], entities=i['entities']) for i in data]
 
     def parse_maic(file):
         from re import match
@@ -40,13 +40,15 @@ def read_file(filepath: str, *args, format: FORMAT = FORMAT.MAIC) -> Sequence[En
                 # need to revisit this logic.
                 raise WarnValueError('Insufficient columns to create an EntityList')
 
-            elm = EntityListModel(name=columns[1], category=columns[0], entities=[])
-            for word in columns[3:]:
+            elm = EntityListModel(name=columns[1], category=columns[0], ranked=(columns[2].strip().upper() == "RANKED"), entities=[])
+            for i, word in enumerate(columns[4:], 4):
                 if match(r"^\s*$", word):
                     # blank column, need to log the error:
-                    pass
+                    logger.info(f"Blank Column: list {elm.name}, column {i}")
                 else:
                     elm.entities.append(word)
+            
+            data.append(elm)
 
         return data
 

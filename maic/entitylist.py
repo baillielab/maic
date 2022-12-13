@@ -11,6 +11,14 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.svm import SVR
 
+from typing import Sequence, MutableSequence
+from maic.types import Corrector, Transformer, Scaler
+
+from .models import EntityListModel
+from .entity import Entity
+
+
+
 logging.basicConfig()
 logger = logging.getLogger(__name__)
 
@@ -22,21 +30,47 @@ FAILED_RANKED_LIST_DESCENT_STEP = 0.00000001
 class EntityList(object):
     """Represent a list of Entity objects"""
 
-    __list_category_counter = 0
-    lock = Lock()
+    from sys import maxsize
+    @staticmethod
+    def frommodel(elm: EntityListModel, *args, entities: dict[str,Entity] = {}, limit:int=maxsize) -> 'EntityList':
+        self = EntityList(elm.name, elm.category, elm.is_ranked)
 
-    def __init__(self):
+        for entity_name in elm.entities[:limit]:
+            e = entities.setdefault(entity_name, Entity(entity_name))
+            self.append(e)
+        
+        if len(elm.entities) > limit:
+            logger.warn(f"Some data in list '{self.name}' was ignored due to a limit on list lengths ({limit}). {len(elm.entities) - limit} entities were skipped.")
+        
+        return self
+
+    __list_category_counter: int = 0
+    lock: Lock = Lock()
+
+    # redundant - only referenced in redundant method EntityList.get_final_weights_for_entity() (and testing)
+    @staticmethod
+    def adjusted_weight(initial: float, baseline_mean:float, baseline_stdev:float, transformer: Transformer, scaler: Scaler):
+        """
+        Correct an initial weight/score as per specified transform and scale
+        methods (applied in that order)
+        """
+        transformed_score = transformer.transform(initial, baseline_mean)
+        scaled_score = scaler.scale(transformed_score, baseline_stdev)
+
+        return scaled_score
+
+    def __init__(self, name:str="", category:str="", is_ranked:bool=False):
         """Build a default EntityList object."""
-        self.__list = []
-        self.__seen = {}
-        self.__entity_indexes_one_based = {}
+        self.__list: MutableSequence[Entity] = []
+        self.__seen: dict[str,Entity] = {}
+        self.__entity_indexes_one_based: dict[Entity, int] = {}
         self.__total_entity_weight = 0.0
         self.__entity_count_minus_one = 1
-        self.is_ranked = False
+        self.is_ranked = is_ranked
         self.weight = 1
         self.delta = None
-        self.category_name = ""  # side-effect sets the category as well
-        self.name = ""
+        self.category_name = category  # side-effect sets the category as well
+        self.name = name
         self.base_score_mean = 0.0  # safe default values
         self.base_score_stdev = 1.0
         self.need_local_baseline_base_score_mean = 0.0  # safe default values
@@ -53,7 +87,7 @@ class EntityList(object):
         for lst in self.__list:
             lst.reset()
 
-    def append(self, entity):
+    def append(self, entity: Entity):
         """Add the Entity to the end of the list"""
         if entity not in self.__seen:  # quicker than scanning the list
             self.__list.append(entity)
@@ -61,14 +95,17 @@ class EntityList(object):
             entity.note_list(self)
             self.__entity_indexes_one_based[entity] = len(self.__list)
 
+    # unused
     def tell_entities_to_forget(self):
         for entity in self.__list:
             entity.forget_list(self)
 
+    # unused
     def tell_entities_to_remember(self):
         for entity in self.__list:
             entity.note_list(self)
 
+    # duplicate: same method appears below with different definition!
     def get_entities(self):
         return self.__seen
 
@@ -81,6 +118,10 @@ class EntityList(object):
             y_vector.append(sqrt(running_total / counter))
             counter += 1
         return y_vector
+
+    @property
+    def category(self) -> str:
+        return self._category
 
     def __setattr__(self, key, value):
         """
@@ -100,7 +141,7 @@ class EntityList(object):
                 category = "Unknown-{:03d}".format(
                     EntityList.__list_category_counter)
                 EntityList.lock.release()
-            super(EntityList, self).__setattr__('category', category)
+            super(EntityList, self).__setattr__('_category', category)
         elif key == 'category':
             raise AttributeError("Can't set 'category' attribute directly")
         super(EntityList, self).__setattr__(key, value)
@@ -141,6 +182,7 @@ class EntityList(object):
         """
         pass
 
+    # unused - used only in testing
     def get_corrected_list_weight(self, score_to_ignore):
         """
         Calculate a corrected weight for this list as if the score_to_ignore
@@ -153,7 +195,8 @@ class EntityList(object):
         return sqrt((self.__total_entity_weight - score_to_ignore) /
                     self.__entity_count_minus_one)
 
-    def get_final_weights_for_entity(self, entity, correction_options):
+    # redundant - only referenced in redundant method Entity.calculate_final_corrected_scores()
+    def get_final_weights_for_entity(self, entity: Entity, correction_options: Sequence[Corrector]) -> dict[Corrector, float]:
         """Calculate all the requested corrected weights for the given
         entity and return them in a dictionary"""
         weights = {}
@@ -162,7 +205,7 @@ class EntityList(object):
             initial = self._weight_function(index)
 
             for correction in correction_options:
-                weighted_value = adjusted_weight(initial, self.base_score_mean,
+                weighted_value = EntityList.adjusted_weight(initial, self.base_score_mean,
                                                  self.base_score_stdev,
                                                  correction.transformer,
                                                  correction.scaler)
@@ -194,6 +237,7 @@ class EntityList(object):
         """
         return self.weight
 
+    # redundant - only called in an unused method
     def code_string(self):
         ranked_string = "r" if self.is_ranked else "u"
         return str(len(self)) + ranked_string
@@ -201,17 +245,21 @@ class EntityList(object):
     def size(self):
         return len(self.__list)
 
+    # unused
     def blank_copy(self):
         """Return a new blank EntityList"""
         return EntityList()
 
+    # duplicate - see above:
     def get_entities(self):
         return self.__list
 
+    # unused
     def set_baseline(self, base_score_mean, base_score_stdev):
         self.base_score_mean = base_score_mean
         self.base_score_stdev = base_score_stdev
 
+    # redundant - this method is called but it does nothing (body has been commented out).
     def _correct_fitted_weights(self):
         """Adjust the values in the fitted weights list to maintain the
         average weight contribution of all lists in line with that of an
@@ -220,108 +268,23 @@ class EntityList(object):
         pass
 
 
-class KnnEntityList(EntityList):
-
-    def _fit_curve_to_entity_scores(self):
-        y_vector = self.get_truncated_weights_list()
-        knn = neighbors.KNeighborsRegressor(n_neighbors=3, weights='distance')
-        x = list(range(1, len(y_vector) + 1, 1))
-        x = np.asanyarray(x)
-        y_vector = np.asanyarray(y_vector)
-        x_vector = x.reshape(-1, 1)
-        knn.fit(x_vector, y_vector)
-        weights = knn.predict(x_vector)
-        weights = list(weights)
-        self.weights_list = weights
-        self.ratio = np.average(weights) / self.weight
-
-    def _weight_function(self, index):
-        return_value = 1
-        if len(self.weights_list) == self.size():
-            return_value = self.weights_list[index - 1]
-            logger.debug(
-                ' '.join((str(self.name), str(index), str(self.weight))))
-        else:
-            logger.debug('KNN Entity List returned weight 1 because we '
-                         'had no parameters')
-
-        return return_value
-
-    def blank_copy(self):
-        """Return a new blank EntityList"""
-        return KnnEntityList()
-
-
-class PolynomialEntityList(EntityList):
-
-    def _fit_curve_to_entity_scores(self):
-        """Do the Polynomial-specific curve fitting."""
-        y_vector = self.get_truncated_weights_list()
-        x = list(range(1, len(y_vector) + 1, 1))
-        x = np.asanyarray(x)
-        y_vector = np.asanyarray(y_vector)
-        x = x.reshape(-1, 1)
-        model = make_pipeline(PolynomialFeatures(2), Ridge())
-        model.fit(x, y_vector)
-        weights = model.predict(x)
-        self.weights_list = weights
-        self.ratio = np.average(weights) / self.weight
-
-    def _weight_function(self, index):
-        """Calculate the Polynomial-specific adjusted weight for entry at
-        index."""
-        return_value = 1
-        if len(self.weights_list) == self.size():
-            return_value = self.weights_list[index - 1]
-            logger.debug(
-                ' '.join((str(self.name), str(index), str(self.weight))))
-        else:
-            logger.debug('Polynomial Entity List returned weight 1 because we '
-                         'had no parameters')
-        return return_value
-
-    def blank_copy(self):
-        """Return a new blank EntityList"""
-        return PolynomialEntityList()
-
-
-class SvrEntityList(EntityList):
-    """EntityList that uses a Support Vector Regression with a Radial
-    Basis Function to model and distribute weights"""
-
-    def _fit_curve_to_entity_scores(self):
-        y_vector = self.get_truncated_weights_list()
-        clf = SVR(kernel='rbf', C=1.0, epsilon=0.2)
-        x = list(range(1, len(y_vector) + 1, 1))
-        x = np.asanyarray(x)
-        y_vector = np.asanyarray(y_vector)
-        x_vector = x.reshape(-1, 1)
-        clf.fit(x_vector, y_vector)
-        weights = list(clf.predict(x_vector))
-        self.weights_list = weights
-        self.ratio = np.average(weights) / self.weight
-
-    def _weight_function(self, index):
-
-        return_value = 1
-        if len(self.weights_list) == self.size():
-            return_value = self.weights_list[index - 1]
-            logger.debug(
-                ' '.join((str(self.name), str(index), str(self.weight))))
-        else:
-            logger.debug('SVR Entity List returned weight 1 because we '
-                         'had no parameters')
-        return return_value
-
-    def blank_copy(self):
-        """Return a new blank EntityList"""
-        return SvrEntityList()
-
-
 class ExponentialEntityList(EntityList):
+    from sys import maxsize
+    @staticmethod
+    def frommodel(elm: EntityListModel, *args, entities: dict[str,Entity] = {}, limit:int=maxsize) -> 'ExponentialEntityList':
+        self = ExponentialEntityList(elm.name, elm.category, elm.is_ranked)
 
-    def __init__(self):
-        super(ExponentialEntityList, self).__init__()
+        for entity_name in elm.entities[:limit]:
+            e = entities.setdefault(entity_name, Entity(entity_name))
+            self.append(e)
+        
+        if len(elm.entities) > limit:
+            logger.warn(f"Some data in list '{self.name}' was ignored due to a limit on list lengths ({limit}). {len(elm.entities) - limit} entities were skipped.")
+        
+        return self
+
+    def __init__(self, name:str="", category:str="", is_ranked:bool=False):
+        super().__init__(name, category, is_ranked)
         self.fit_parameters = None
 
     def _fit_curve_to_entity_scores(self):
@@ -385,18 +348,7 @@ class ExponentialEntityList(EntityList):
         super(ExponentialEntityList, self).reset()
         self.fit_parameters = None
 
+    # unused
     def blank_copy(self):
         """Return a new blank EntityList"""
         return ExponentialEntityList()
-
-
-def adjusted_weight(initial, baseline_mean, baseline_stdev, transformer,
-                    scaler):
-    """
-    Correct an initial weight/score as per specified transform and scale
-    methods (applied in that order)
-    """
-    transformed_score = transformer.transform(initial, baseline_mean)
-    scaled_score = scaler.scale(transformed_score, baseline_stdev)
-
-    return scaled_score

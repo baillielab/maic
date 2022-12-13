@@ -6,6 +6,8 @@ from .entitylist import EntityList, KnnEntityList, PolynomialEntityList, \
     ExponentialEntityList, SvrEntityList
 from .errors import WarnValueError, KillValueError
 
+from sys import maxsize
+
 blank_matcher = re.compile("^\\s*$")
 
 logging.basicConfig()
@@ -18,12 +20,11 @@ class EntityListBuilder(object):
     input line.
     """
 
-    def __init__(self, list_type, limit=None):
+    def __init__(self, list_type, limit=maxsize):
         """Initialise an EntityListBuilder"""
-        from sys import maxsize
         self.__list_names = {}
         self.list_type = list_type
-        self.limit = maxsize if limit is None else limit
+        self.limit = limit
         self._entity_dict = {}
 
     def build_list_from_string(self, string, limit=None):

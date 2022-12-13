@@ -1,6 +1,4 @@
 # coding=utf-8
-from __future__ import print_function
-
 import logging
 import os
 import re
@@ -12,8 +10,7 @@ from maic.io.cv_dumper import CrossValidationDumper
 from maic.io.cv_plotter import CrossValidationPlotter
 from maic.entitylist_builder import EntityListBuilder
 from maic.io.file_reader import FileReader
-from maic.io.genescores_dumper import AllScoresGeneScoresDumper, \
-    IterationAwareGeneScoresDumper
+from maic.io.genescores_dumper import AllScoresGeneScoresDumper, IterationAwareGeneScoresDumper
 from maic.cli.options import get_parsed_options
 
 
