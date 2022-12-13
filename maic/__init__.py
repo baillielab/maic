@@ -1,6 +1,6 @@
 from time import strftime
 from .entity import Entity
-from .entitylist import ExponentialEntityList
+from .entitylist import EntityList, ExponentialEntityList
 from .cross_validation import CrossValidation, POST_ITERATION_CALLBACK
 from .constants import T_METHOD_NONE
 
@@ -84,7 +84,10 @@ class Maic:
         self._lists: Sequence[ExponentialEntityList] = []
 
         for elm in modellist:
-            self._lists.append(ExponentialEntityList.frommodel(elm, entities=self._entities, limit=maxlistlength))
+            if elm.is_ranked:
+                self._lists.append(ExponentialEntityList.frommodel(elm, entities=self._entities, limit=maxlistlength))
+            else:
+                self._lists.append(EntityList.frommodel(elm, entities=self._entities, limit=maxlistlength))
 
         self._cv = CrossValidation(list(self._entities.values()), self._lists, threshold, maxiterations)
         self.output_folder = "."
