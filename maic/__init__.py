@@ -48,10 +48,10 @@ class Maic:
             m.output_folder = output_folder
 
         if plot:
-            m.addplotter()
+            m.add_plotter()
 
         if dump:
-            m.adddumper()
+            m.add_dumper()
 
         return m
 

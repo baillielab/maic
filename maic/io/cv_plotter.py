@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from maic.io.genescores_dumper import AllScoresGeneScoresDumper
+from os import makedirs, path
 from math import sqrt
 
 class CrossValidationPlotter(object):
@@ -7,7 +8,8 @@ class CrossValidationPlotter(object):
     def __init__(self, directory_path=None):
         super(CrossValidationPlotter, self).__init__()
         if directory_path:
-            self.directory_path = directory_path + "/"
+            makedirs(directory_path, exist_ok=True)
+            self.directory_path = directory_path
         else:
             self.directory_path = ""
 
@@ -43,14 +45,9 @@ class CrossValidationPlotter(object):
             # showing legend
             plt.legend()
             # function to save the plot
-            plot_filepath = "{preceding}{list_name}-" \
-                            "{iteration:03d}.png".format(
-                                preceding=self.directory_path,
-                                list_name=entity_list.name,
-                                iteration=iteration_number
-                            )
+            plot_filepath = path.join(self.directory_path, f"{entity_list.name}-{iteration_number:03d}.png")
             plt.savefig(plot_filepath)
             plt.close()
 
-        gsd = AllScoresGeneScoresDumper(cross_validation, self.directory_path, ".{iteration:03d}".format(iteration=iteration_number))
-        gsd.dump()
+        #gsd = AllScoresGeneScoresDumper(cross_validation, self.directory_path, ".{iteration:03d}".format(iteration=iteration_number))
+        #gsd.dump()
