@@ -24,8 +24,8 @@ All declared constants *except* `T_METHOD_NONE`
 ### `cross_validation.py`
 
 - `replace_list()` line 48
-- `code_string()` line 123
-- `summary_data()` line 137
+- **`code_string()` line 123 -- keep per BW, 14/12/2022 **
+- **`summary_data()` line 137 -- Keep per BW, 14/12/2022**
 - `get_or_create_entity()` line 145
 
 ### `entity.py`
@@ -39,7 +39,7 @@ All declared constants *except* `T_METHOD_NONE`
 - `tell_entities_to_remember()` line 68
 - `get_corrected_list_weight()` line 144
 - `blank_copy()` line 204 and line 388
--` set_baseline()` line 211
+- `set_baseline()` line 211
 - ALL subclasses of `EntityList` *except* `ExponentialEntityList`
     - `KnnEntityList` lines 223 - 254
     - `PolynomialEntityList` lines 255 - 287
@@ -68,6 +68,7 @@ The following chain of methods is called as part of running the cross validation
 ### `code_string()` (`entitylist.py`, line 197)
 
 Only called in the unused method `code_string()` (`cross_validation.py`, line 123)
+** per BW 14/12/2022, worth keeping `code_string()` to assist consumers with debugging/tracking iterations **
 
 ### `_correct_fitted_weights() `(`entitylist.py`, line 215)
 
