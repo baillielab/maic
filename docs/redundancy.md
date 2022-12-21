@@ -24,14 +24,14 @@ All declared constants *except* `T_METHOD_NONE`
 ### `cross_validation.py`
 
 - `replace_list()` line 48
-- **`code_string()` line 123 -- keep per BW, 14/12/2022 **
+- **`code_string()` line 123 -- keep per BW, 14/12/2022**
 - **`summary_data()` line 137 -- Keep per BW, 14/12/2022**
 - `get_or_create_entity()` line 145
 
 ### `entity.py`
 
 - `as_dict_for_json()` line 29
-- `score_from_list()` line 124
+- **`score_from_list()` line 124** used in `maic/__init__.py` when constructing results
 
 ### `entitylist.py`
 
@@ -47,6 +47,7 @@ All declared constants *except* `T_METHOD_NONE`
 
 * `get_entities()` (lines 72 **and** 208)
 It is fortunate that this method is unused, as it has two definitions in the class with different return values.
+**note: it turned out get_entities() was called, once, in a plotter implementation, but was only used to calculate the length of the entitylist. As EntityList defines a __len__ method, I have replaced the call (at `cv_plotter.py`, line 18) with a call to len(entity_list)**
 
 ### `options.py`
 
@@ -68,7 +69,7 @@ The following chain of methods is called as part of running the cross validation
 ### `code_string()` (`entitylist.py`, line 197)
 
 Only called in the unused method `code_string()` (`cross_validation.py`, line 123)
-** per BW 14/12/2022, worth keeping `code_string()` to assist consumers with debugging/tracking iterations **
+**per BW 14/12/2022, worth keeping `code_string()` to assist consumers with debugging/tracking iterations**
 
 ### `_correct_fitted_weights() `(`entitylist.py`, line 215)
 
