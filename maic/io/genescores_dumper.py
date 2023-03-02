@@ -4,24 +4,22 @@ import io
 import sys
 import numpy as np
 from maic.constants import T_METHOD_NONE
-
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from maic.cross_validation import CrossValidation
-    from maic.entity import Entity
-    from maic.entitylist import ExponentialEntityList 
-
+from os.path import join
+from os import makedirs
 
 # TODO - rewrite this object to handle TransformMethods rather than separate
 #  methods
 
 class GeneScoresDumper(object):
 
-    def __init__(self, cross_validation: CrossValidation, output_folder=None):
+    def __init__(self, cross_validation, output_folder=None):
         """Create a GeneScoresDumper object for the given CrossValidation
         analysis"""
         self.cross_validation = cross_validation
+        
+        if output_folder:
+            makedirs(output_folder, exist_ok=True)
+
         self.output_folder = output_folder
 
     def lists_in_category_order(self):
@@ -63,7 +61,7 @@ class GeneScoresDumper(object):
         # a header and the data to stdout
         out_stream = sys.stdout
         if self.output_folder:
-            out_stream = io.open("{}{}.txt".format(self.output_folder, famn.filename), 'w+')
+            out_stream = io.open(join(self.output_folder, "{}.txt".format(famn.filename)), 'w+')
         else:
             out_stream.writelines("-------- {} ---------".format(famn.filename))
 
@@ -146,10 +144,10 @@ class AllScoresGeneScoresDumper(GeneScoresDumper):
     def extra_headers(self):
         return ['contributors']
 
-    def score_for_entity_from_list(self, entity: Entity, lst: ExponentialEntityList):
+    def score_for_entity_from_list(self, entity, lst):
         return entity.raw_score_from_list(lst)
 
-    def additional_column_data(self, entity: Entity) -> str:
+    def additional_column_data(self, entity) -> str:
         return_value_list:list[str] = []
         category_winners = entity.winning_lists_by_category()
         for category in category_winners:
@@ -163,7 +161,7 @@ class IterationAwareGeneScoresDumper(AllScoresGeneScoresDumper):
     iteration it is being called from (using the CrossValidation callback
     mechanism"""
 
-    def __init__(self, cross_validation: CrossValidation, output_folder=None):
+    def __init__(self, cross_validation, output_folder=None):
         super(IterationAwareGeneScoresDumper, self).__init__(
             cross_validation=cross_validation,
             output_folder=output_folder

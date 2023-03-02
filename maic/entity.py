@@ -1,14 +1,7 @@
-from __future__ import annotations
-
 """
 Code relating to the creation and management of Entities
 """
 from .constants import T_METHOD_NONE
-from typing import MutableSequence, Sequence, TYPE_CHECKING
-from maic.types import Corrector
-
-if TYPE_CHECKING:
-    from .entitylist import EntityList
 
 class Entity:
     """Represent an entity (e.g. a gene)."""
@@ -18,27 +11,26 @@ class Entity:
         assert name
         self.name = name
         self.score = 1
-        self.lists: MutableSequence[EntityList] = []
+        self.lists = []
         self.__weights = {}
-        self.__category_winners:dict[str,EntityList] = {}
+        self.__category_winners = {}
         self.adjusted_scores = {}
 
     def transformed_score(self, method=T_METHOD_NONE):
         """Return the transformed score for the requested transform method.
-        If no matching score is found then return zero"""
+        If the transform method is none and it isn't already in the adjusted scores, we add it.
+        Otherwise, if no matching score is found then return zero"""
         transformed_score = 0
         if method in self.adjusted_scores:
             transformed_score = self.adjusted_scores.get(method)
+        elif method == T_METHOD_NONE:
+            # if there is no transform but we haven't yet set the 'adjusted' score we can do that now:
+            self.adjusted_scores[method] = self.score
+            transformed_score = self.score
+        
         return transformed_score
 
-    # unused
-    def as_dict_for_json(self):
-        """Convert the relevant fields to a dictionary suitable for dumping
-        as JSON"""
-        return dict(name=self.name, adjusted_scores=self.adjusted_scores,
-                    score=self.score)
-
-    def note_list(self, entity_list: EntityList):
+    def note_list(self, entity_list):
         """
         Add the supplied list to our list of lists if it wasn't already in
         there.
@@ -47,59 +39,10 @@ class Entity:
             self.lists.append(entity_list)
             self.__weights[entity_list] = 0.0
 
-    def forget_list(self, entity_list: EntityList):
+    def forget_list(self, entity_list):
         if entity_list in self.lists:
             self.lists.remove(entity_list)
             del self.__weights[entity_list]
-
-    # redundant - referenced but Correctors are not defined in system.
-    def calculate_final_corrected_scores(self, methods:Sequence[Corrector]=None):
-        """Having reached completion, we can now calculate the corrected or
-        adjusted scores based on a number of options"""
-
-        # KJB, BW, AL agreed on 26th April 2019 that it is correct to
-        # calculate a new score _after_ the weights have converged
-        if methods is None:
-            methods:Sequence[Corrector] = []
-
-        self.calculate_new_score()
-        adjusted_weights: dict[Corrector, dict[str, Sequence[float]]] = {}
-
-        # Set up a data structure to grab back all the weights, sorted by
-        # list category
-        for method in methods:
-            adjusted_weights[method] = {}
-            for lst in self.lists:
-                if lst.category not in adjusted_weights[method]:
-                    adjusted_weights[method][lst.category] = []
-
-        # Get the local (list-specific) weights
-        adjusted_scores: dict[str,float] = {}
-        for lst in self.lists:
-            lst_weights = lst.get_final_weights_for_entity(self, methods)
-            for method in lst_weights:
-                adjusted_weights[method][lst.category].append(
-                    lst_weights[method])
-
-        # And then sum the maximum adjusted weights in each category to give
-        # a final score
-        for method in methods:
-            adjusted_scores[method.name] = self.sum_max_weights_per_category(
-                adjusted_weights[method])
-
-        adjusted_scores[T_METHOD_NONE] = self.score
-
-        self.adjusted_scores = adjusted_scores
-
-    # redundant - only referenced in redundant method Entity.calculate_final_corrected_score()
-    @staticmethod
-    def sum_max_weights_per_category(weights: dict[str, Sequence[float]]) -> float:
-        """Calculate the sum of the highest value in each of the categories
-        in the weights dictionary"""
-        sum_of_weights = 0.0
-        for category in weights:
-            sum_of_weights += max(weights[category])
-        return sum_of_weights
 
     def calculate_new_score(self):
         """Calculate the new score for this Entity"""
@@ -130,15 +73,14 @@ class Entity:
                 self.__category_winners[lst.category] = lst
         self.score = new_score
 
-    # unused - only used in testing
+    # used for sorting 
     def score_from_list(self, entity_list):
         """Report the contribution of the given list to the current score"""
         return_value = 0.0
         if entity_list in self.lists:
             category = entity_list.category
             if category in self.__category_winners:
-                if self.__category_winners[entity_list.category] == \
-                        entity_list:
+                if self.__category_winners[entity_list.category] == entity_list:
                     return_value = self.__weights[entity_list]
         return return_value
 

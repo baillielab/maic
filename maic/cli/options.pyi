@@ -1,0 +1,3 @@
+from argparse import Namespace
+
+def get_parsed_options(args: list[str] | None = ...) -> Namespace: ...

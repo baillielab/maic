@@ -4,9 +4,7 @@ from time import sleep, strftime
 from unittest import TestCase
 
 import maic.cli.options as options
-from maic.constants import T_METHOD_NONE, T_METHOD_MEAN, T_METHOD_STEM_SCALE, \
-    T_METHOD_STEM_ADJUST, S_METHOD_NONE, S_METHOD_Z_TRANSFORM, \
-    S_METHOD_STEM_POW
+from maic.constants import T_METHOD_NONE
 
 EXPECTED_OPTION_ATTRIBUTE_KEYS = [
     'dump',
@@ -16,22 +14,11 @@ EXPECTED_OPTION_ATTRIBUTE_KEYS = [
     'max_iterations',
     'output_folder',
     'plot',
-    'random_source_len',
     'stability',
+    'type',
     'weight_function'
 ]
 EXPECTED_OPTION_ATTRIBUTE_COUNT = len(EXPECTED_OPTION_ATTRIBUTE_KEYS)
-
-# Keep these in sync with those defined in the options.py file. These are
-# here because we rely on the string values within code and changing them in
-# the options.py file without the check might lead to unintended changes in
-# behaviour if the code that uses the option values was not kept up to date
-EXPECTED_TRANSFORM_STANDARD_OPTIONS = [T_METHOD_NONE, T_METHOD_MEAN]
-EXPECTED_TRANSFORM_EXTENDED_OPTIONS = [T_METHOD_STEM_SCALE,
-                                       T_METHOD_STEM_ADJUST]
-
-EXPECTED_SCALE_STANDARD_OPTIONS = [S_METHOD_NONE, S_METHOD_Z_TRANSFORM]
-EXPECTED_SCALE_EXTENDED_OPTIONS = [S_METHOD_STEM_POW]
 
 
 class TestOptions(TestCase):

@@ -1,17 +1,12 @@
 from time import strftime
-from .entity import Entity
 from .entitylist import EntityList, ExponentialEntityList
 from .cross_validation import CrossValidation, POST_ITERATION_CALLBACK
-from .constants import T_METHOD_NONE
 
 from maic.io.cv_plotter import CrossValidationPlotter
 from maic.io.cv_dumper import CrossValidationDumper
 from maic.io.genescores_dumper import AllScoresGeneScoresDumper, IterationAwareGeneScoresDumper
 
-from .models import EntityListModel
-
-from maic.io import FORMAT, read_file
-from typing import Sequence, Any
+from maic.io import Format, read_file
 
 import re
 import os
@@ -31,15 +26,27 @@ from numpy import zeros, std, max as npmax
 class Maic:
 
     @staticmethod
-    def fromfile(filepath:str, *, 
-        format:FORMAT=FORMAT.MAIC, 
-        threshold:float=0.01, 
-        maxlistlength:int=2000, 
-        maxiterations:int=100, 
-        output_folder:str=None, 
-        plot:bool=False, 
-        dump:bool=False,
+    def fromfile(filepath, *, 
+        format=Format.MAIC, 
+        threshold=0.01, 
+        maxlistlength=2000, 
+        maxiterations=100, 
+        output_folder=None, 
+        plot=False, 
+        dump=False,
     ):
+        """
+        Construct a MAIC analysis from an input file.
+        Parameters (all but filepath are *keyword only*):
+        @filepath: the relative or absolute path to the file containing the data.
+        @format: the format of the data in the file: MAIC, JSON or YAML (see maic.io.FORMAT)
+        @threshold: the maximum change in list weights to indicate result convergence
+        @maxlistlength: the maximum number of entities to import for each line in the file (entities beyond this value are discarded *before* analysis).
+        @maxiterations: the maximum number of iterations to complete if the list weights do not converge to the @threshold
+        @output_folder: the path of the folder in which to record results
+        @plot: default False - set True to plot the distribution of scores for each list on each iteration
+        @dump: default False - set True to dump the list scores to file for each generation
+        """
         elm_lists = read_file(filepath, format=format)
 
         m = Maic(modellist=elm_lists, threshold=threshold, maxlistlength=maxlistlength, maxiterations=maxiterations)
@@ -57,7 +64,10 @@ class Maic:
 
     @staticmethod
     def fromCLI(options=None):
-        
+        """
+        Used by maic.cli to run analyses directly from the command line.
+        Calls Maic.fromfile, using parameters generated via maic.io.options
+        """
         if options is None:
             raise ValueError("Cannot call static method fromCLI() without options argument")
 
@@ -75,13 +85,13 @@ class Maic:
 
 
     def __init__(self, *, 
-        modellist:Sequence[EntityListModel], 
-        threshold:float=0.01, 
-        maxlistlength:int=2000, 
-        maxiterations:int=100, 
+        modellist, 
+        threshold=0.01, 
+        maxlistlength=2000, 
+        maxiterations=100, 
     ):
-        self._entities: dict[str, Entity] = {}
-        self._lists: Sequence[ExponentialEntityList] = []
+        self._entities = {}
+        self._lists = []
 
         for elm in modellist:
             if elm.is_ranked:
@@ -99,8 +109,8 @@ class Maic:
 
     @output_folder.setter
     def output_folder(self, value):
-        """Given a requested output folder, create it and return the full
-        path as a String. If the output folder is empty or not defined,
+        """Given a requested output folder, create it and store the full path as a property of this Maic object. 
+        If the output folder is empty or not defined,
         return the empty string. If the output folder already exists and
         does not already end with something that looks like a timestamp then
         try to add a timestamp to it."""
@@ -108,6 +118,7 @@ class Maic:
         if not value:
             logger.info("No output folder specified - will use the current "
                         "directory")
+            value = "."
 
         # Don't try to create the current folder. Do try to make a directory
         # for all other instances
@@ -130,13 +141,13 @@ class Maic:
 
         self._of = value
 
-    def add_plotter(self, plotter:CrossValidationPlotter=None):
+    def add_plotter(self, plotter=None):
         if plotter is None:
             plotter = CrossValidationPlotter(join(self.output_folder, "images"))
 
         self._cv.plotter = plotter
 
-    def add_dumper(self, dumper:CrossValidationDumper=None):
+    def add_dumper(self, dumper=None):
         if dumper is None:
             dumper = CrossValidationDumper(IterationAwareGeneScoresDumper(self._cv, join(self.output_folder, "scores")))
 
@@ -146,7 +157,7 @@ class Maic:
         if self._run:
             logger.warn("Duplicate run of MAIC analysis: we recommend only running this analysis once.")
 
-        self._cv.run()
+        self._cv.run_analysis()
         self._run = True
 
         if dump_result:
@@ -162,13 +173,13 @@ class Maic:
         for entity in self._cv.entities:
             entity_scores = {
                 "name": entity.name,
-                "maic_score": entity.transformed_score(method=T_METHOD_NONE)
+                "maic_score": entity.transformed_score()
             }
 
             for lst in self._cv.entity_lists:
                 entity_scores[lst.name] = max(0.0, entity.score_from_list(lst))
 
-            entity_scores["contrubitors"] = ", ".join([f"{k}: {v.name}" for k,v in entity.winning_lists_by_category().items()])
+            entity_scores["contributors"] = ", ".join([f"{k}: {v.name}" for k,v in entity.winning_lists_by_category().items()])
 
             result.append(entity_scores)
         
@@ -206,17 +217,17 @@ class Maic:
             elif hetro > 0.12:
                 rec = "BIRRA"
 
-        return recommendations[rec]
+        return recommendations[rec].format(listcount=number_of_lists)
 
 
-    def dump_result(self, *, folder=None, format=FORMAT.MAIC):
+    def dump_result(self, *, folder=None, format=Format.MAIC):
         if not self._run:
             raise RuntimeError("Attempt to dump results before analysis has been run.")
 
         if folder is None:
             folder = self.output_folder
 
-        if format == FORMAT.MAIC:
+        if format == Format.MAIC:
             gsd = AllScoresGeneScoresDumper(self._cv, folder)
             gsd.dump()
             gsd.dataset_feature_check_to_choice_methods()
@@ -227,12 +238,12 @@ class Maic:
                 "methodology": self.methodology_feature_check
             }
 
-            filename = "maic-raw.json" if format == FORMAT.JSON else "maic-raw.yml"
+            filename = "maic-raw.json" if format == Format.JSON else "maic-raw.yml"
 
             with open(join(folder, filename), "w+") as f:
-                if format == FORMAT.JSON:
+                if format == Format.JSON:
                     dumpJSON(results, f)
-                elif format == FORMAT.YAML:
+                elif format == Format.YAML:
                     dumpYAML(results, f)
                 else:
                     raise ValueError(f"Unknown file format {format}")

@@ -6,9 +6,12 @@ from enum import Enum
 import logging
 logger = logging.getLogger(__name__)
 
-FORMAT = Enum("Format", "MAIC JSON YAML")
+class Format(Enum):
+    MAIC = "MAIC"
+    JSON = "JSON"
+    YAML = "YAML"
 
-def read_file(filepath: str, *args, format: FORMAT = FORMAT.MAIC) -> Sequence[EntityListModel]:
+def read_file(filepath, *args, format=Format.MAIC):
     
     def parse_json(file):
         from json import load
@@ -53,9 +56,9 @@ def read_file(filepath: str, *args, format: FORMAT = FORMAT.MAIC) -> Sequence[En
         return data
 
     parsers = {
-        FORMAT.MAIC: parse_maic,
-        FORMAT.YAML: parse_yaml,
-        FORMAT.JSON: parse_json
+        Format.MAIC: parse_maic,
+        Format.YAML: parse_yaml,
+        Format.JSON: parse_json
     }
 
     if format not in parsers:

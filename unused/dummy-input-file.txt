@@ -1,6 +1,0 @@
-GENE_COUNTS	List_1	RANKED	forFutureUse	Gene1	Gene2	Gene3	Gene4
-ASSOCIATION	List_2	UNRANKED	forFutureUse	GeneX	Gene2	GeneY
-#ASSOCIATION	List_3	UNRANKED	forFutureUse	GeneX	Gene2	GeneY
------
-ASSOCIATION	List_4	UNRANKED	forFutureUse	GeneX	Gene2	GeneY
-ASSOCIATION	List_5	UNRANKED	forFutureUse	GeneX	Gene2	GeneY

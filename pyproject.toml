@@ -20,4 +20,8 @@ dependencies = [
 maic = "maic.cli:run"
 
 [tool.setuptools]
-packages = ["maic"]
+packages = ["maic", "maic.io", "maic.models", "maic.cli"]
+
+[tool.setuptools.package-data]
+"*" = ["*.pyi"]
+"maic" = ["py.typed"]

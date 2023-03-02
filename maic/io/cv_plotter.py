@@ -1,7 +1,5 @@
 import matplotlib.pyplot as plt
-from maic.io.genescores_dumper import AllScoresGeneScoresDumper
 from os import makedirs, path
-from math import sqrt
 
 class CrossValidationPlotter(object):
 
@@ -15,12 +13,7 @@ class CrossValidationPlotter(object):
 
     def plot_cross_validation(self, cross_validation, iteration_number=None):
         for entity_list in cross_validation.entity_lists:
-            entities = entity_list.get_entities()
-            x_values = range(len(entities))
-
-            scores = [ent.score for ent in entities]
-
-            #plt.scatter(x_values, scores, label="Scores", color="green",marker="*", s=30)
+            x_values = range(len(entity_list))
 
             truncated_list_weights = entity_list.get_truncated_weights_list()
             plt.plot(x_values, truncated_list_weights,
@@ -48,6 +41,3 @@ class CrossValidationPlotter(object):
             plot_filepath = path.join(self.directory_path, f"{entity_list.name}-{iteration_number:03d}.png")
             plt.savefig(plot_filepath)
             plt.close()
-
-        #gsd = AllScoresGeneScoresDumper(cross_validation, self.directory_path, ".{iteration:03d}".format(iteration=iteration_number))
-        #gsd.dump()

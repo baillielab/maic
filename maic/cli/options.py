@@ -8,7 +8,7 @@ import argparse
 import logging
 import os
 from time import strftime
-from maic.io import FORMAT
+from maic.io import Format
 
 
 def get_parsed_options(args=None):
@@ -51,13 +51,11 @@ def get_parsed_options(args=None):
             base = os.path.splitext(parsed_options.filename)[0]
             parsed_options.output_folder = base + '-' + timestamp
 
-    parsed_options.type = FORMAT[parsed_options.type]
+    parsed_options.type = Format[parsed_options.type]
 
     # Set the non-negotiable options
     parsed_options.max_input_len = 2000
     parsed_options.weight_function = 'exponential'
-    # random_source_len ONLY appears here, and in test_options!
-    parsed_options.random_source_len = 20000
     parsed_options.stability = 0.01
     parsed_options.max_iterations = 100
     parsed_options.logging_level = logging.WARN
