@@ -114,7 +114,7 @@ models = []
 
 # prepare the data:
 for list in mydata:
-    models.append(EntityModelList(name=list.name, category=list.category, ranked=True if list.type == "RANKED" else False, entities=list.entities))
+    models.append(EntityListModel(name=list.name, category=list.category, ranked=True if list.type == "RANKED" else False, entities=list.entities))
 
 app = MAIC(modellist = models)
 ...
