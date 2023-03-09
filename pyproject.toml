@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pymaic"
-version = "0.2"
+version = "0.2.1"
 requires-python = ">=3.6"
 dependencies = [
     "mock",
@@ -15,6 +15,20 @@ dependencies = [
     "matplotlib",
     "oyaml"
 ]
+readme = "README.md"
+license = { file = "LICENSE"}
+authors = [
+    {name = "Bo Wang", email = "bo.wang@roslin.ed.ac.uk" },
+    {name = "Andy Law", email = "andy.law@roslin.ed.ac.uk"},
+    {name = "JK Baillie", email = "j.k.baillie@ed.ac.uk"},
+    {name = "D Farr"}
+]
+maintainers = [
+    {name = "Jim McGrath", email = "jim.mcgrath@ed.ac.uk"}
+]
+
+[project.urls]
+repository = "https://github.com/baillielab/maic/tree/packaging"
 
 [project.scripts]
 maic = "maic.cli:run"
