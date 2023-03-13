@@ -189,7 +189,15 @@ class Maic:
 
     @property
     def sorted_results(self):
-        """The results of the analysis, sorted by descending MAIC score"""
+        """
+        The results of the analysis, sorted by descending MAIC score
+        
+        Results are returned as a list of score dictionaries, each containing the following keys:
+        'name': the entity's name as recorded in the entity lists
+        'maic_score': the final score assigned to this entity
+        'contributors': a comma-separate list indicating the "winning" list for each category
+        Additionally, the name of each list is added as a key with the value equal to that list's contriubting score.
+        """
         if not self._run:
             raise RuntimeError("Attempt to retrieve entity scores before analysis has been run.")
 
