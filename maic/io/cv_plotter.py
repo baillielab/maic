@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from os import makedirs, path
 
 class CrossValidationPlotter(object):
-
+    """A callback class to plotting results each iteration"""
     def __init__(self, directory_path=None):
         super(CrossValidationPlotter, self).__init__()
         if directory_path:

@@ -3,6 +3,7 @@ from sys import argv
 from .. import Maic
 
 def run():
+    """This function is installed as a CLI command and should NOT be run from a python script"""
     options = get_parsed_options(argv[1:])
 
     app = Maic.fromCLI(options)

@@ -20,8 +20,10 @@ class EntityList(object):
     """Represent a list of Entity objects"""
 
     from sys import maxsize
+
     @staticmethod
-    def frommodel(elm, *args, entities, limit):
+    def frommodel(elm, *args, entities, limit=maxsize):
+        """Create an EntityList from an EntityListModel"""
         self = EntityList(elm.name, elm.category, elm.is_ranked)
 
         for entity_name in elm.entities[:limit]:
@@ -173,6 +175,7 @@ class ExponentialEntityList(EntityList):
     from sys import maxsize
     @staticmethod
     def frommodel(elm, *args, entities={}, limit=maxsize):
+        """Create an ExponentialEntityList from an EntityListModel"""
         self = ExponentialEntityList(elm.name, elm.category, elm.is_ranked)
 
         for entity_name in elm.entities[:limit]:

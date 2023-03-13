@@ -1,5 +1,5 @@
 class CrossValidationDumper(object):
-
+    """A callback class to handle dumping results per iteration"""
     def __init__(self, dumper=None):
         super(CrossValidationDumper, self).__init__()
         self.dumper = dumper

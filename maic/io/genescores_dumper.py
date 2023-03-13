@@ -7,9 +7,6 @@ from maic.constants import T_METHOD_NONE
 from os.path import join
 from os import makedirs
 
-# TODO - rewrite this object to handle TransformMethods rather than separate
-#  methods
-
 class GeneScoresDumper(object):
 
     def __init__(self, cross_validation, output_folder=None):

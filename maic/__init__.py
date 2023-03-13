@@ -90,6 +90,14 @@ class Maic:
         maxlistlength=2000, 
         maxiterations=100, 
     ):
+        """
+        Construct a new MAIC analysis from a list of maic.models.EntityListModel
+        Parameters (all are *keyword only*):
+        @modellist: the list of *EntityListModel*s from which to construct the analysis
+        @threshold: the maximum change in list weights to indicate result convergence
+        @maxlistlength: the maximum length of list for this analysis (lists longer than this value will be truncated)
+        @maxiterations: the maximum number of interations ot run if the results do not converge to @threshold
+        """
         self._entities = {}
         self._lists = []
 
@@ -105,6 +113,7 @@ class Maic:
 
     @property
     def output_folder(self):
+        """the path to the folder for dumping results"""
         return self._of
 
     @output_folder.setter
@@ -142,18 +151,33 @@ class Maic:
         self._of = value
 
     def add_plotter(self, plotter=None):
+        """
+        add a CrossValidationPlotter to this MAIC analysis.
+        Parameters:
+        @plotter: the CrossValidationPlotter to use. If this is None, a default plotter is used.
+        """
         if plotter is None:
             plotter = CrossValidationPlotter(join(self.output_folder, "images"))
 
         self._cv.plotter = plotter
 
     def add_dumper(self, dumper=None):
+        """
+        Add a CrossValidationDumper to this MAIC analysis
+        Parameters:
+        @dumper: the CrossValidationDumper to use. If this is None, a default dumper is added.
+        """
         if dumper is None:
             dumper = CrossValidationDumper(IterationAwareGeneScoresDumper(self._cv, join(self.output_folder, "scores")))
 
         self._cv.register_callback(POST_ITERATION_CALLBACK, dumper)
 
     def run(self, *, dump_result=True):
+        """
+        Run the analysis.
+        Parameters (all are *keywork only*):
+        @dump_result: default True - change to False to prevent the final result being dumped to files in *output_folder*
+        """
         if self._run:
             logger.warn("Duplicate run of MAIC analysis: we recommend only running this analysis once.")
 
@@ -165,6 +189,7 @@ class Maic:
 
     @property
     def sorted_results(self):
+        """The results of the analysis, sorted by descending MAIC score"""
         if not self._run:
             raise RuntimeError("Attempt to retrieve entity scores before analysis has been run.")
 
@@ -187,6 +212,7 @@ class Maic:
 
     @property
     def methodology_feature_check(self):
+        """A description of the dataset and methodology used, including advice on choice of algorithm."""
         if not self._run:
             raise RuntimeError("Attempt to retrieve dataset features before analysis has been run.")
 
@@ -221,6 +247,12 @@ class Maic:
 
 
     def dump_result(self, *, folder=None, format=Format.MAIC):
+        """
+        Dump the result of this analysis tp *output_folder*
+        Parameters (all are *keyword only*):
+        @folder: the path to a folder to use instead of *output folder*
+        @format: the format for results output - default MAIC
+        """
         if not self._run:
             raise RuntimeError("Attempt to dump results before analysis has been run.")
 

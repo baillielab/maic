@@ -7,11 +7,18 @@ import logging
 logger = logging.getLogger(__name__)
 
 class Format(Enum):
+    """Enum to manage the various recognised file formats in MAIC"""
     MAIC = "MAIC"
     JSON = "JSON"
     YAML = "YAML"
 
 def read_file(filepath, *args, format=Format.MAIC):
+    """
+    Read a file and convert it into a list of EntityListModels for constructing analyses
+    Parameter (all except *filepath* are *keyword only*):
+    @filepath: the path to the file to read
+    @format: the format of the input file - default MAIC
+    """
     
     def parse_json(file):
         from json import load

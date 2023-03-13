@@ -24,17 +24,21 @@ class EntityListModel:
 
     @property
     def name(self):
+        """The name of this list model"""
         return self._name
 
     @property
     def category(self):
+        """The category of this list model"""
         return self._category
 
     @property
     def entities(self):
+        """The list of entities represented by this model"""
         return self._entities
 
     @property
     def is_ranked(self):
+        """A bool indicating whether the entities in this model are listed by rank"""
         return self._is_ranked
 
