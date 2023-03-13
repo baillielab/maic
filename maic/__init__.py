@@ -60,6 +60,8 @@ class Maic:
         if dump:
             m.add_dumper()
 
+        m._default_format = format
+
         return m
 
     @staticmethod
@@ -110,6 +112,7 @@ class Maic:
         self._cv = CrossValidation(list(self._entities.values()), self._lists, threshold, maxiterations)
         self.output_folder = "."
         self._run = False
+        self._default_format = None
 
     @property
     def output_folder(self):
@@ -254,12 +257,12 @@ class Maic:
         return recommendations[rec].format(listcount=number_of_lists)
 
 
-    def dump_result(self, *, folder=None, format=Format.MAIC):
+    def dump_result(self, *, folder=None, format=None):
         """
         Dump the result of this analysis tp *output_folder*
         Parameters (all are *keyword only*):
         @folder: the path to a folder to use instead of *output folder*
-        @format: the format for results output - default MAIC
+        @format: the format for results output. If this is None and the MAIC analysis was created from a file, the format of that file will be used. Otherwise, MAIC format will be used.
         """
         if not self._run:
             raise RuntimeError("Attempt to dump results before analysis has been run.")
@@ -267,6 +270,13 @@ class Maic:
         if folder is None:
             folder = self.output_folder
 
+        if format is None:
+            if self._default_format is None:
+                format = Format.MAIC
+            else:
+                format = self._default_format
+
+                
         if format == Format.MAIC:
             gsd = AllScoresGeneScoresDumper(self._cv, folder)
             gsd.dump()
