@@ -124,8 +124,6 @@ app = MAIC(modellist = models)
 # Dataset analysis for methods selection
   
 The dataset features including ranking information, the number of sources included and the heterogeneity of quality will be explored to show the estimation of the best performed ranking aggregation method for the given dataset. See Wang et al [https://doi.org/10.1093/bioinformatics/btac621] for an explanation of how we evaluated this. 
-  
-Examples are included in the folder example_input_and_result with simulated input data and output of MAIC. 
 
   When MixLarge data with high heterogeneity (See Wang et al [https://doi.org/10.1093/bioinformatics/btac621]) is used, the algorithm will output:
   
