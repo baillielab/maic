@@ -18,10 +18,10 @@ dependencies = [
 readme = "README.md"
 license = { file = "LICENSE"}
 authors = [
-    {name = "Bo Wang", email = "bo.wang@roslin.ed.ac.uk" },
+    {name = "J Kenneth Baillie", email = "j.k.baillie@ed.ac.uk"},
     {name = "Andy Law", email = "andy.law@roslin.ed.ac.uk"},
-    {name = "JK Baillie", email = "j.k.baillie@ed.ac.uk"},
-    {name = "D Farr"}
+    {name = "Bo Wang", email = "bo.wang@roslin.ed.ac.uk" },
+    {name = "David Farr", email = "contact@baillielab.net"}
 ]
 maintainers = [
     {name = "Jim McGrath", email = "jim.mcgrath@ed.ac.uk"}

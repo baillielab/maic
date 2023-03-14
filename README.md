@@ -1,10 +1,10 @@
 # Version 0.2
 
 # Authors
-- A Law
-- D Farr
-- B Wang
 - JK Baillie
+- A Law
+- B Wang
+- D Farr
 
 # Meta-analysis by information content (MAIC)
 Data-driven aggregation of ranked and unranked lists
