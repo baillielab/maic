@@ -28,6 +28,7 @@ maintainers = [
 ]
 
 [project.urls]
+homepage = "https://baillielab.net/maic"
 repository = "https://github.com/baillielab/maic"
 pacckage_repo = "https://github.com/baillielab/maic/tree/packaging"
 
