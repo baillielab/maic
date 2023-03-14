@@ -11,6 +11,12 @@ Data-driven aggregation of ranked and unranked lists
 
 https://baillielab.net/maic
 
+# Code availability
+
+This branch of the maic repository contains the original code, designed to be run as a python script from the command line. it also includes a variety of supplemntary files, including example input and output.
+
+A refactored, functionally identical, version of the code, which can be run from the command line or incorporated into other python scripts, is available from PyPI at https://pypi.org/project/pymaic/0.2/, and on github at https://github.com/baillielab/maic/tree/packaging
+
 # basic usage
 
 python maic.py -f <inputfilename>
