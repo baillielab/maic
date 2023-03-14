@@ -28,7 +28,8 @@ maintainers = [
 ]
 
 [project.urls]
-repository = "https://github.com/baillielab/maic/tree/packaging"
+repository = "https://github.com/baillielab/maic"
+pacckage_repo = "https://github.com/baillielab/maic/tree/packaging"
 
 [project.scripts]
 maic = "maic.cli:run"

@@ -11,6 +11,11 @@ Data-driven aggregation of ranked and unranked lists
 
 https://baillielab.net/maic
 
+# Code repositories
+
+Original implementation: https://github.com/baillielab/maic
+Refactored package code: https://github.com/baillielab/maic/tree/packaging
+
 # basic usage
 
 ## installation:
