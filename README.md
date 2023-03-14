@@ -66,7 +66,7 @@ Each line of the input file describes a list of entities. The first four columns
 
 Files can also be provided as semi-structured data in either JSON or YAML format:
 
-```{json}
+```json
 [
   {
     "name": <list_label>,
@@ -78,7 +78,7 @@ Files can also be provided as semi-structured data in either JSON or YAML format
 ]
 ```
 
-```{yaml}
+```yaml
 -
   name: <list_label>
   category: <category>
@@ -98,7 +98,7 @@ You can instantiate a MAIC analysis in python if you want greater control over t
 
 ### Constructing a MAIC analysis object from a file to give programmatic access to the results:
 
-```{python}
+```python
 from maic import MAIC
 
 app = MAIC.fromfile("/path/to/inputfile")
@@ -111,7 +111,7 @@ for result in app.sorted_results():
 
 ### Constructing a MAIC analysis from sources other than a file:
 
-```{python}
+```python
 from maic import MAIC
 from maic.models import EntityListModel
 
