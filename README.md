@@ -1,12 +1,14 @@
 # Version 0.2
 
 # Authors
+
 - A Law
 - D Farr
 - B Wang
 - JK Baillie
 
 # Meta-analysis by information content (MAIC)
+
 Data-driven aggregation of ranked and unranked lists
 
 https://baillielab.net/maic
@@ -19,7 +21,7 @@ A refactored, functionally identical, version of the code, which can be run from
 
 # basic usage
 
-python maic.py -f <inputfilename>
+python maic.py -f `<inputfilename>`
 
 # Input file format
 
@@ -36,27 +38,44 @@ The first four columns (tab-separated text strings) in each line specify feature
 
 # Options
 
--f FILENAME, --filename FILENAME
-                      path to the file containing data to be analysed
+-f , --filename
 
--o, --output-folder 'path to the folder in which to write the '
-                             'results files'
+path to the file containing data to be analysed
 
--v, --verbose         increase the detail of logging messages.
+-o, --output-folder
 
--q, --quiet           decrease the detail of logging messages (overrides the
-                      -v/--verbose flag)
+path to the folder in which to write the results files
+
+-p, --plot
+
+draw plots for each list at each iteration
+
+-d, --dump-scores
+
+dump maic scores at each iteration
+
+-l, --max_input_len
+
+maximum list length (default:2000)
+
+-v, --verbose
+
+increase the detail of logging messages
+
+-q, --quiet
+
+decrease the detail of logging messages (overrides the -v/--verbose flag)
 
 # Dataset analysis for methods selection
-  
-The dataset features including ranking information, the number of sources included and the heterogeneity of quslity will be explored to show the estimation of the best performed ranking aggregation method for the given dataset. See Wang et al [https://doi.org/10.1093/bioinformatics/btac621] for an explanation of how we evaluated this. 
-  
-Examples are included in the folder example_input_and_result with simulated input data and output of MAIC. 
+
+The dataset features including ranking information, the number of sources included and the heterogeneity of quslity will be explored to show the estimation of the best performed ranking aggregation method for the given dataset. See Wang et al [https://doi.org/10.1093/bioinformatics/btac621] for an explanation of how we evaluated this.
+
+Examples are included in the folder example_input_and_result with simulated input data and output of MAIC.
 
   When MixLarge data with high heterogeneity (See Wang et al [https://doi.org/10.1093/bioinformatics/btac621]) is used, the algorithm will output:
-  
+
   "Based on the characteristics of your dataset, we have estimated that MAIC is the best algorithm for this analysis! See Wang et al [https://doi.org/10.1093/bioinformatics/btac621] for an explanation of how we evaluated this."
 
   When RankLarge data with high heterogeneity (See Wang et al [https://doi.org/10.1093/bioinformatics/btac621]) is used, the algorithm will output:
-  
+
   "Warning! Your dataset has the unusual combination of ranked-only data, high heterogeneity and a relatively large number of sources (11) included. Based on these features we think you'd get better results from running BIRRA [http://www.pitt.edu/~mchikina/BIRRA/]. See Wang et al [https://doi.org/10.1093/bioinformatics/btac621] for an explanation of how we evaluated this."
