@@ -31,6 +31,9 @@ def get_parsed_options(args=None):
                         dest='dump',
                         help='dump maic scores at each iteration')
     #
+    parser.add_argument('-l', '--max_input_len', type=int, default=2000,
+                        help='maximum list length (default:2000)')
+    #
     parser.add_argument('-v', '--verbose', action='count', default=0,
                         help='increase the detail of logging messages.')
     #
@@ -48,7 +51,6 @@ def get_parsed_options(args=None):
             parsed_options.output_folder = base + '-' + timestamp
 
     # Set the non-negotiable options
-    parsed_options.max_input_len = 2000
     parsed_options.weight_function = 'exponential'
     parsed_options.random_source_len = 20000
     parsed_options.stability = 0.01
