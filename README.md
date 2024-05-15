@@ -23,7 +23,7 @@ A refactored, functionally identical, version of the code, which can be run from
 
 python maic.py -f `<inputfilename>`
 
-When using readme at https://pypi.org/project/pymaic/0.2/, if this command "maic -f <inputfilename>" does not work, download the entire repo. and run "python maic.py -f <inputfilename>".
+When using readme at https://pypi.org/project/pymaic/0.2/, if this command "maic -f '<inputfilename>'" does not work, download the entire repo. and run "python maic.py -f '<inputfilename>'".
 
 # Input file format
 
