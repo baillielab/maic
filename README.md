@@ -23,6 +23,8 @@ A refactored, functionally identical, version of the code, which can be run from
 
 python maic.py -f `<inputfilename>`
 
+When using readme athttps://pypi.org/project/pymaic/0.2/, if this command "maic -f <inputfilename>" does not work, download the entire repo. and run "python maic.py -f <inputfilename>".
+
 # Input file format
 
 Input is a series of lists of named entities, which may belong to categories. Each line of the input file is a list of entities, separated by tab
