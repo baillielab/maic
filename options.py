@@ -48,9 +48,9 @@ def get_parsed_options(args=None):
             parsed_options.output_folder = base + '-' + timestamp
 
     # Set the non-negotiable options
-    parsed_options.max_input_len = 2000
+    parsed_options.max_input_len = 100000000
     parsed_options.weight_function = 'exponential'
-    parsed_options.random_source_len = 20000
+    parsed_options.random_source_len = 100000
     parsed_options.stability = 0.01
     parsed_options.max_iterations = 100
     parsed_options.logging_level = logging.WARN
